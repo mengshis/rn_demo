@@ -17,32 +17,22 @@ import React, {
   StyleSheet,
   Text,
   Image,
-  View
+  View,
+  ListView,
 } from 'react-native';
 
-
-  // render() {
-  //   var movie = MOCKED_MOVIES_DATA[0];
-  //   return (
-  //     <View style={styles.container}>
-  //       <Image source={{uri: movie.posters.thumbnail}} style={styles.thumbnail} />
-  //       <View style={styles.rightContainer}>
-  //         <Text style={styles.title}>
-  //           {movie.title}
-  //         </Text>
-  //         <Text style={styles.year}>
-  //           {movie.year}
-  //         </Text>
-  //       </View >
-  //     </View>
-  //   );
-  // }
-
-  
-
- 
-
   class rn_demo extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+          dataSource: new ListView.DataSource({
+          rowHasChanged: (row1, row2) => row1 !== row2,
+        }),
+        loaded: false,
+        };
+      }       
+
 
     componentDidMount(){
       this.fetchData();
@@ -53,26 +43,26 @@ import React, {
         .then((response) => response.json())
         .then((responseData) => {
           this.setState({
-            movies: responseData.movies,
+            dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+            loaded: true,
           });
         })
         .done();
     }
 
-    constructor(props){
-      super(props);
-      this.state = {
-        movies:null,
-      };
-    }   
-
+   
     render() {
-      if (!this.state.movies) {
+      if (!this.state.loaded) {
         return this.renderLoadingView();
       }
 
-      var movie = this.state.movies[0];
-      return this.renderMovie(movie);
+      return (
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderMovie}
+          style={styles.listView}
+        />
+      );
     }
 
     renderLoadingView() {
@@ -122,10 +112,9 @@ const styles = StyleSheet.create({
     marginBottom:8,
     textAlign:'center',
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
   },
   thumbnail:{
     width:60,
