@@ -9,6 +9,10 @@ cd rn_demo
 
 open it with Xcode,then run
 
+RNmovie是仿照github上facebook 官方库中的一个小项目，地址：https://github.com/facebook/react-native/tree/master/Examples/Movies
+
+
+
 
 
 
